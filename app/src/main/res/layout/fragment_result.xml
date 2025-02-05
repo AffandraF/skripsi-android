@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="#111a22"
+    android:background="@color/background_color"
     tools:context=".ui.ResultFragment">
 
     <LinearLayout
@@ -13,19 +13,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header -->
         <TextView
             android:id="@+id/diagnosisTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/diagnosis"
             android:textSize="22sp"
-            android:textColor="@android:color/white"
+            android:textColor="@color/border_color"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
             android:paddingBottom="16dp" />
 
-        <!-- Image preview -->
         <ImageView
             android:id="@+id/resultImage"
             android:layout_width="match_parent"
@@ -34,14 +32,13 @@
             android:scaleType="centerCrop"
             />
 
-        <!-- Result text -->
         <TextView
             android:id="@+id/classificationResult"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Disease Name"
             android:textSize="24sp"
-            android:textColor="@android:color/white"
+            android:textColor="@color/border_color"
             android:fontFamily="sans-serif-black"
             android:paddingBottom="8dp" />
 
@@ -51,17 +48,17 @@
             android:layout_height="wrap_content"
             android:text="Confidence Level"
             android:textSize="18sp"
-            android:textColor="#87CEEB"
+            android:textColor="@color/primary_color"
             android:paddingBottom="16dp" />
 
-        <!-- Recommendations -->
+
         <TextView
             android:id="@+id/recommendationsTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Recommendations"
             android:textSize="18sp"
-            android:textColor="@android:color/white"
+            android:textColor="@color/border_color"
             android:fontFamily="sans-serif-medium"
             android:paddingBottom="8dp" />
 
@@ -71,18 +68,16 @@
             android:layout_height="wrap_content"
             android:text="Follow these steps to improve plant health."
             android:textSize="16sp"
-            android:textColor="#93adc8"
+            android:textColor="@color/primary_color"
             android:paddingBottom="24dp" />
 
-        <!-- Start over button -->
         <Button
             android:id="@+id/startOverButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Start Over"
-            android:backgroundTint="#1E90FF"
-            android:textColor="@android:color/white"
-            android:textAllCaps="false"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/background_color"
             android:fontFamily="sans-serif-bold"
             android:padding="12dp" />
     </LinearLayout>

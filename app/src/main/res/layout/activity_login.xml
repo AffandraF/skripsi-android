@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.auth.LoginActivity">
+    tools:context=".ui.auth.LoginActivity"
+    android:background="@color/background_color">
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -22,7 +23,7 @@
         android:id="@+id/textViewTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Mobile Application Development"
+        android:text="Selamat Datang"
         android:textColor="@color/primary_color"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -79,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
-        android:text="Forgot Password?"
+        android:text="Lupa Password?"
         android:textColor="@color/link_color"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -121,8 +122,8 @@
 
         <ImageButton
             android:id="@+id/buttonGoogleLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:background="?android:attr/selectableItemBackground"
             android:src="@drawable/ic_google_logo"
             android:scaleType="centerInside"

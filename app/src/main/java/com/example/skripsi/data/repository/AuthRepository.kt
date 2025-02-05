@@ -18,7 +18,7 @@ class AuthRepository {
                 } else {
                     val exception = task.exception
                     Log.e("AuthRepository", "Registration failed", exception)
-                    callback(null)  // You can handle this differently based on the exception
+                    callback(null)
                 }
             }
     }

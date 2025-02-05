@@ -18,10 +18,9 @@ class ClassificationRepository {
 
     private val apiService: ApiService = RetrofitInstance.getApiService()
 
-    // Fungsi untuk mengklasifikasikan gambar dengan userId dan mendapatkan hasil dari API
     fun classifyImage(userId: String, imageFile: File, callback: (ClassificationResponse?) -> Unit) {
         val requestBody = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
-        val multipartBody = MultipartBody.Part.createFormData("image", imageFile.name, requestBody)
+        val multipartBody = MultipartBody.Part.createFormData("imageFile", imageFile.name, requestBody)
         val userIdBody: RequestBody = userId.toRequestBody("text/plain".toMediaTypeOrNull())
 
         apiService.classifyImage(userIdBody, multipartBody).enqueue(object : Callback<ClassificationResponse> {

@@ -2,18 +2,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.skripsi.data.repository.HistoryRepository
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 
 class HistoryViewModel : ViewModel() {
-    private val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("History")
+    private val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("history")
     private val storageRef = FirebaseStorage.getInstance().reference
     private val _historyItems = MutableLiveData<List<HistoryRepository>>()
     val historyItems: LiveData<List<HistoryRepository>> get() = _historyItems
 
     fun fetchHistory() {
-        databaseRef.addValueEventListener(object : ValueEventListener {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserId == null) {
+            _historyItems.value = emptyList()
+            return
+        }
+
+        val userHistoryRef = databaseRef.child(currentUserId)
+        userHistoryRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val items = mutableListOf<HistoryRepository>()
                 for (data in snapshot.children) {
@@ -26,7 +33,7 @@ class HistoryViewModel : ViewModel() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle error
+
             }
         })
     }
@@ -35,7 +42,8 @@ class HistoryViewModel : ViewModel() {
         storageRef.child(path).downloadUrl.addOnSuccessListener { uri ->
             callback(uri.toString())
         }.addOnFailureListener {
-            callback("") // Handle failure
+            callback("")
         }
     }
 }
+

@@ -44,7 +44,7 @@ class ResultFragment : BottomSheetDialogFragment() {
         recommendationsTextView.text = recommendations ?: "No recommendations available"
 
         imageUri?.let {
-            resultImageView.setImageURI(it)  // Display the image using local URI
+            resultImageView.setImageURI(it)
         }
 
         startOverButton.setOnClickListener {
@@ -60,7 +60,7 @@ class ResultFragment : BottomSheetDialogFragment() {
         private const val ARG_RECOMMENDATIONS = "recommendations"
         private const val ARG_IMAGE_URI = "imageUri"
 
-        fun newInstance(result: String, confidence: String, recommendations: String, imageUri: Uri) =
+        fun newInstance(result: String, confidence: String, recommendations: String?, imageUri: Uri) =
             ResultFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_RESULT, result)

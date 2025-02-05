@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonHistory.setOnClickListener {
-            // Pindah ke halaman history
             val intent = Intent(this, HistoryActivity::class.java)
             startActivity(intent)
         }
@@ -103,8 +102,12 @@ class MainActivity : AppCompatActivity() {
         imageCapture.takePicture(outputFileOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                 val savedUri = outputFileResults.savedUri ?: Uri.fromFile(createFile())
-                selectedImageUri = savedUri
-                viewModel.classifyImage(userId, File(savedUri.path))
+                if (savedUri != null) {
+                    selectedImageUri = savedUri
+                    viewModel.classifyImage(userId, File(savedUri.path!!))
+                } else {
+                    Toast.makeText(this@MainActivity, "Failed to retrieve image URI.", Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun onError(exception: ImageCaptureException) {
@@ -144,13 +147,26 @@ class MainActivity : AppCompatActivity() {
     private val galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val uri = result.data?.data
-            uri?.let {
-                selectedImageUri = it
-                val file = uriToFile(it, this)
-                file?.let { viewModel.classifyImage(userId, it) }
+            if (uri != null) {
+                try {
+                    selectedImageUri = uri
+                    val file = uriToFile(uri, this)
+                    if (file != null) {
+                        viewModel.classifyImage(userId, file)
+                    } else {
+                        Toast.makeText(this, "Failed to convert image URI to file.", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Error processing selected image: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "No image selected.", Toast.LENGTH_SHORT).show()
             }
+        } else {
+            Toast.makeText(this, "Image selection canceled.", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun uriToFile(selectedImg: Uri, context: Context): File {
         val contentResolver = context.contentResolver
@@ -175,9 +191,19 @@ class MainActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.classificationResult.observe(this, Observer { response ->
             response?.let {
-                val resultFragment = ResultFragment.newInstance(it.disease, it.accuracy.toString(), it.recommendations, selectedImageUri!!)
-                resultFragment.show(supportFragmentManager, resultFragment.tag)
+                if (selectedImageUri != null) {
+                    val resultFragment = ResultFragment.newInstance(
+                        it.disease,
+                        it.confidence,
+                        it.recommendations,
+                        selectedImageUri!!
+                    )
+                    resultFragment.show(supportFragmentManager, resultFragment.tag)
+                } else {
+                    Toast.makeText(this, "Image URI is not available.", Toast.LENGTH_SHORT).show()
+                }
             }
         })
     }
+
 }

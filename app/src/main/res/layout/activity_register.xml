@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.auth.RegisterActivity">
+    tools:context=".ui.auth.RegisterActivity"
+    android:background="@color/background_color">
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -22,8 +23,8 @@
         android:id="@+id/textViewTitleRegister"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Create Your Account"
-        android:textColor="@color/primary_color"
+        android:text="Buat Akun"
+        android:textColor="@color/border_color"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -37,7 +38,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Full Name"
+        android:hint="Nama Lengkap"
         android:layout_marginTop="32dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -100,9 +101,9 @@
         android:layout_marginTop="32dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/rounded_button"
+        android:background="@color/primary_color"
         android:text="Register"
-        android:textColor="@android:color/white"
+        android:textColor="@color/background_color"
         app:layout_constraintTop_toBottomOf="@id/layoutPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -123,14 +124,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="Or sign up with"
+            android:text="Atau masuk dengan"
             android:textColor="@color/link_color"
             android:textSize="14sp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonGoogleRegister"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:background="?android:attr/selectableItemBackground"
             android:src="@drawable/ic_google_logo"
             android:scaleType="centerInside"
@@ -148,7 +149,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Already have an account? "
+            android:text="Sudah punya akun? "
             android:textColor="@color/link_color"
             android:textSize="14sp" />
 

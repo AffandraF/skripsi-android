@@ -7,7 +7,6 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.skripsi.databinding.ActivityRegisterBinding
-import com.example.skripsi.R
 import com.example.skripsi.viewmodel.AuthState
 import com.example.skripsi.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -64,7 +63,7 @@ class RegisterActivity : AppCompatActivity() {
 
         binding.buttonGoogleRegister.setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
-            startActivityForResult(signInIntent, 1001)  // You can handle the result in onActivityResult
+            startActivityForResult(signInIntent, 1001)
         }
 
         // Navigate to LoginActivity when the user already has an account

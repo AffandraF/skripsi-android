@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#111a22"
+    android:background="@color/background_color"
     tools:context=".ui.HistoryActivity">
 
     <TextView
@@ -12,13 +12,13 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:text="Disease Classification History"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/border_color"
         android:textSize="20sp"
         android:fontFamily="sans-serif-medium"
         android:gravity="center" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_history"
+        android:id="@+id/rvHistory"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

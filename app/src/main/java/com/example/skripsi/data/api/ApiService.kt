@@ -11,7 +11,7 @@ import retrofit2.http.Part
 interface ApiService {
 
     @Multipart
-    @POST("classify") // Endpoint API Anda
+    @POST("classify")
     fun classifyImage(
         @Part("user_id") userId: RequestBody,
         @Part image: MultipartBody.Part

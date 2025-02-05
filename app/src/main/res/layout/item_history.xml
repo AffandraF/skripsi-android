@@ -3,12 +3,12 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="8dp"
-    android:background="#111a22">
+    android:background="@color/background_color">
 
     <ImageView
         android:id="@+id/image_disease"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:scaleType="centerCrop"
         android:background="@drawable/bg_image_placeholder"
         android:layout_marginEnd="8dp" />
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Disease Name"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/border_color"
             android:textSize="16sp"
             android:fontFamily="sans-serif-medium" />
 
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Confidence: 90%"
-            android:textColor="#93adc8"
+            android:textColor="@color/primary_color"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="12/20/2022"
-        android:textColor="#93adc8"
+        android:textColor="@color/primary_color"
         android:textSize="14sp"
         android:gravity="end" />
 </LinearLayout>

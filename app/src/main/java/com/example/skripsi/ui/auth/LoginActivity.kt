@@ -17,7 +17,6 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 
 class LoginActivity : AppCompatActivity() {
 
@@ -26,7 +25,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
     private val authViewModel: AuthViewModel by viewModels()
-    private var showOneTapUI = true
 
     companion object {
         private const val TAG = "LoginActivity"
