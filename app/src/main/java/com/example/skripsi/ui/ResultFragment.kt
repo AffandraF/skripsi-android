@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.skripsi.R
@@ -37,7 +36,6 @@ class ResultFragment : BottomSheetDialogFragment() {
         val confidenceTextView = view.findViewById<TextView>(R.id.classificationConfidence)
         val recommendationsTextView = view.findViewById<TextView>(R.id.recommendationsText)
         val resultImageView = view.findViewById<ImageView>(R.id.resultImage)
-        val startOverButton = view.findViewById<Button>(R.id.startOverButton)
 
         resultTextView.text = classificationResult ?: "Unknown Disease"
         confidenceTextView.text = "Confidence: $confidence"
@@ -45,10 +43,6 @@ class ResultFragment : BottomSheetDialogFragment() {
 
         imageUri?.let {
             resultImageView.setImageURI(it)
-        }
-
-        startOverButton.setOnClickListener {
-            parentFragmentManager.popBackStack()
         }
 
         return view

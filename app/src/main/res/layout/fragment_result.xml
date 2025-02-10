@@ -13,6 +13,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <View
+            android:layout_width="36dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="@color/border_color"
+            android:alpha="0.5"
+            android:clipToOutline="true"
+            android:scaleType="centerCrop"
+            android:background="@drawable/rounded_bar" />
+
         <TextView
             android:id="@+id/diagnosisTitle"
             android:layout_width="match_parent"
@@ -29,8 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:layout_marginBottom="16dp"
-            android:scaleType="centerCrop"
-            />
+            android:scaleType="centerCrop"/>
 
         <TextView
             android:id="@+id/classificationResult"
@@ -51,7 +61,6 @@
             android:textColor="@color/primary_color"
             android:paddingBottom="16dp" />
 
-
         <TextView
             android:id="@+id/recommendationsTitle"
             android:layout_width="match_parent"
@@ -70,15 +79,5 @@
             android:textSize="16sp"
             android:textColor="@color/primary_color"
             android:paddingBottom="24dp" />
-
-        <Button
-            android:id="@+id/startOverButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Start Over"
-            android:background="@drawable/rounded_button"
-            android:textColor="@color/background_color"
-            android:fontFamily="sans-serif-bold"
-            android:padding="12dp" />
     </LinearLayout>
 </ScrollView>

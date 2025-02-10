@@ -17,7 +17,7 @@ class HistoryAdapter(private val historyList: List<HistoryRepository>, private v
 
         fun bind(historyItem: HistoryRepository) {
             binding.tvDiseaseName.text = historyItem.diseaseName
-            binding.tvConfidence.text = "Confidence: ${historyItem.accuracy}%"
+            binding.tvConfidence.text = "Confidence: ${historyItem.confidence}"
             binding.tvDate.text = historyItem.date
 
             viewModel.getImageUrl(historyItem.imagePath) { imageUrl ->

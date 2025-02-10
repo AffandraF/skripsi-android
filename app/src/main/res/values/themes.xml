@@ -1,13 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Skripsi" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
-        <color name="background_color">#E9EFEC</color>
-        <color name="primary_color">#6A9C89</color>
-        <color name="link_color">#2196F3</color>
-        <color name="border_color">#16423C</color>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">#6A9C89</item>
-        <!-- Customize your theme here. -->
+    <style name="Theme.Skripsi" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryVariant">@color/border_color</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorButtonNormal">@color/primary_color</item>
     </style>
 </resources>
