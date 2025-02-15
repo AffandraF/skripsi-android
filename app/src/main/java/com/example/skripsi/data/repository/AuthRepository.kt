@@ -4,7 +4,6 @@ import android.util.Log
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 
 class AuthRepository {
 
@@ -31,20 +30,6 @@ class AuthRepository {
                 } else {
                     val exception = task.exception
                     Log.e("AuthRepository", "Login failed", exception)
-                    callback(null)
-                }
-            }
-    }
-
-    fun loginWithGoogle(idToken: String, callback: (FirebaseUser?) -> Unit) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    callback(auth.currentUser)
-                } else {
-                    val exception = task.exception
-                    Log.e("AuthRepository", "Google login failed", exception)
                     callback(null)
                 }
             }

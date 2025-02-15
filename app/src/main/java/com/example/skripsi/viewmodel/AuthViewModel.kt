@@ -5,10 +5,9 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.skripsi.R
+import com.example.skripsi.BuildConfig
 import com.example.skripsi.repository.AuthRepository
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 
@@ -51,7 +50,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getGoogleSignInOptions(): GoogleSignInOptions {
         return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getApplication<Application>().getString(R.string.web_client_id))
+            .requestIdToken(BuildConfig.WEB_CLIENT_ID)
             .requestEmail()
             .build()
     }
@@ -73,14 +72,4 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             }
     }
 
-    // Get the current user
-    fun getCurrentUser(): FirebaseUser? {
-        return authRepository.getCurrentUser()
-    }
-
-    // Sign out the user
-    fun signOut() {
-        authRepository.signOut()
-        _authState.value = AuthState.Success  // You can change this to a logged-out state if necessary
-    }
 }

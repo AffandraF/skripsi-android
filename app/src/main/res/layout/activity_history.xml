@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Disease Classification History"
+        android:text="Riwayat Klasifikasi"
         android:textColor="@color/border_color"
         android:textSize="20sp"
         android:fontFamily="sans-serif-medium"

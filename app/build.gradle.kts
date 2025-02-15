@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
+val WEB_CLIENT_ID: String by project
+
 android {
     namespace = "com.example.skripsi"
     compileSdk = 34
@@ -25,11 +27,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "WEB_CLIENT_ID", "\"${WEB_CLIENT_ID}\"")
+        }
+        debug {
+            buildConfigField("String", "WEB_CLIENT_ID", "\"${WEB_CLIENT_ID}\"")
         }
     }
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     compileOptions {
@@ -46,6 +53,7 @@ dependencies {
     implementation(libs.androidx.core.v1130)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.core.splashscreen)
     implementation(platform(libs.firebase.bom))
     implementation(libs.androidx.credentials.v130)
     implementation(libs.androidx.credentials.play.services.auth)

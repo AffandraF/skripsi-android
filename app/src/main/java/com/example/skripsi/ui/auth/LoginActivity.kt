@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.skripsi.R
+import com.example.skripsi.BuildConfig
 import com.example.skripsi.databinding.ActivityLoginBinding
 import com.example.skripsi.ui.MainActivity
 import com.example.skripsi.viewmodel.AuthState
@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
             .setGoogleIdTokenRequestOptions(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
-                    .setServerClientId(getString(R.string.web_client_id))
+                    .setServerClientId(BuildConfig.WEB_CLIENT_ID)
                     .setFilterByAuthorizedAccounts(true)
                     .build()
             )

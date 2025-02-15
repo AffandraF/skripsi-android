@@ -38,7 +38,7 @@ class ResultFragment : BottomSheetDialogFragment() {
         val resultImageView = view.findViewById<ImageView>(R.id.resultImage)
 
         resultTextView.text = classificationResult ?: "Unknown Disease"
-        confidenceTextView.text = "Confidence: $confidence"
+        confidenceTextView.text = confidence ?: "Unknown"
         recommendationsTextView.text = recommendations ?: "No recommendations available"
 
         imageUri?.let {
