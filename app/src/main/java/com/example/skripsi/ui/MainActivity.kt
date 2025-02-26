@@ -19,6 +19,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.camera.core.*
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -123,8 +125,17 @@ class MainActivity : AppCompatActivity() {
                 it.setSurfaceProvider(findViewById<androidx.camera.view.PreviewView>(R.id.camera_texture_view).surfaceProvider)
             }
 
+            val resolutionSelector = ResolutionSelector.Builder()
+                .setResolutionStrategy(
+                    ResolutionStrategy(
+                        Size(480, 480),
+                        ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER
+                    )
+                )
+                .build()
+
             imageCapture = ImageCapture.Builder()
-                .setTargetResolution(Size(640, 480))
+                .setResolutionSelector(resolutionSelector)
                 .build()
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -194,11 +205,7 @@ class MainActivity : AppCompatActivity() {
                 try {
                     selectedImageUri = uri
                     val file = uriToFile(uri, this)
-                    if (file != null) {
-                        viewModel.classifyImage(userId, file)
-                    } else {
-                        Toast.makeText(this, "Failed to convert image URI to file.", Toast.LENGTH_SHORT).show()
-                    }
+                    viewModel.classifyImage(userId, file)
                 } catch (e: Exception) {
                     Toast.makeText(this, "Error processing selected image: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
