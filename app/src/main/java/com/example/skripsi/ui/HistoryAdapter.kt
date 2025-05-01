@@ -1,21 +1,23 @@
 package com.example.skripsi.ui
 
-import HistoryViewModel
+import com.example.skripsi.viewmodel.HistoryViewModel
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.skripsi.R
-import com.example.skripsi.data.repository.HistoryRepository
+import com.example.skripsi.data.model.HistoryItem
 import com.example.skripsi.databinding.ItemHistoryBinding
 
-class HistoryAdapter(private val historyList: List<HistoryRepository>, private val viewModel: HistoryViewModel) :
-    RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
+class HistoryAdapter(
+    private var historyList: List<HistoryItem>,
+    private val viewModel: HistoryViewModel
+) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     inner class HistoryViewHolder(private val binding: ItemHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(historyItem: HistoryRepository) {
+        fun bind(historyItem: HistoryItem) {
             binding.tvDiseaseName.text = historyItem.diseaseName
             binding.tvConfidence.text = historyItem.confidence
             binding.tvDate.text = historyItem.date
@@ -40,5 +42,10 @@ class HistoryAdapter(private val historyList: List<HistoryRepository>, private v
     }
 
     override fun getItemCount() = historyList.size
-}
 
+    // Fungsi untuk update data
+    fun updateData(newList: List<HistoryItem>) {
+        historyList = newList
+        notifyDataSetChanged()
+    }
+}

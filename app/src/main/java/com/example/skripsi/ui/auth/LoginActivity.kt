@@ -15,15 +15,15 @@ import com.example.skripsi.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var auth: FirebaseAuth
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
+
     private val authViewModel: AuthViewModel by viewModels()
 
     companion object {
@@ -36,43 +36,26 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Firebase Auth
-        auth = FirebaseAuth.getInstance()
-
-        // Initialize Google One Tap client
+        // Inisialisasi Google One Tap Client
         oneTapClient = Identity.getSignInClient(this)
 
-        // Configure One Tap sign-in request
+        // Konfigurasi Google One Tap Sign In
         signInRequest = BeginSignInRequest.builder()
             .setGoogleIdTokenRequestOptions(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
-                    .setServerClientId(BuildConfig.WEB_CLIENT_ID)
-                    .setFilterByAuthorizedAccounts(true)
+                    .setServerClientId(BuildConfig.webClientId)
+                    .setFilterByAuthorizedAccounts(false) // Agar bisa login dengan akun yang berbeda
                     .build()
             )
             .build()
 
-        // Handle Google One Tap Login
-        binding.buttonGoogleLogin.setOnClickListener {
-            oneTapClient.beginSignIn(signInRequest)
-                .addOnSuccessListener(this) { result ->
-                    try {
-                        startIntentSenderForResult(
-                            result.pendingIntent.intentSender,
-                            REQ_ONE_TAP,
-                            null,
-                            0,
-                            0,
-                            0
-                        )
-                    } catch (e: IntentSender.SendIntentException) {
-                        Log.e(TAG, "Couldn't start One Tap UI: ${e.localizedMessage}")
-                    }
-                }
-        }
+        setupListeners()
+        observeAuthState()
+    }
 
-        // Handle Email Login
+    private fun setupListeners() {
+        // Login dengan Email & Password
         binding.buttonLogin.setOnClickListener {
             val email = binding.inputUsername.text.toString()
             val password = binding.inputPassword.text.toString()
@@ -83,33 +66,45 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // Handle Registration navigation
+        // Login dengan Google
+        binding.buttonGoogleLogin.setOnClickListener {
+            oneTapClient.beginSignIn(signInRequest)
+                .addOnSuccessListener(this) { result ->
+                    try {
+                        startIntentSenderForResult(
+                            result.pendingIntent.intentSender, REQ_ONE_TAP,null,
+                            0, 0,
+                            0
+                        )
+                    } catch (e: IntentSender.SendIntentException) {
+                        Log.e(TAG, "Couldn't start One Tap UI: ${e.localizedMessage}")
+                    }
+                }
+                .addOnFailureListener {
+                    Log.e(TAG, "Google One Tap Sign-in failed: ${it.localizedMessage}")
+                }
+        }
+
+        // Navigasi ke Halaman Register
         binding.linkRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
-
-        // Observe auth state
-        authViewModel.authState.observe(this) { state ->
-            when (state) {
-                is AuthState.Loading -> binding.progressBar.visibility = View.VISIBLE
-                is AuthState.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                }
-                is AuthState.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    Log.e(TAG, "Login failed: ${state.message}")
-                }
-                else -> Log.e(TAG, "Unexpected AuthState: $state")
-            }
-        }
     }
 
-    override fun onStart() {
-        super.onStart()
-        val currentUser = auth.currentUser
-        updateUI(currentUser)
+    private fun observeAuthState() {
+        authViewModel.authState.observe(this) { state ->
+            when (state) {
+                is AuthState.Loading -> showLoading(true)
+                is AuthState.Success -> {
+                    showLoading(false)
+                    navigateToMainActivity()
+                }
+                is AuthState.Error -> {
+                    showLoading(false)
+                    Log.e(TAG, "Login Failed: ${state.message}")
+                }
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -121,21 +116,20 @@ class LoginActivity : AppCompatActivity() {
                 if (idToken != null) {
                     authViewModel.loginWithGoogle(idToken)
                 } else {
-                    Log.d(TAG, "No ID token!")
+                    Log.e(TAG, "No Google ID Token!")
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Google sign-in failed", e)
+                Log.e(TAG, "Google Sign-in Failed", e)
             }
         }
     }
 
-
-    private fun updateUI(user: FirebaseUser?) {
-        if (user != null) {
-            Log.d(TAG, "User signed in: ${user.email}")
-        } else {
-            Log.d(TAG, "No user signed in")
-        }
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
+    private fun navigateToMainActivity() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
 }

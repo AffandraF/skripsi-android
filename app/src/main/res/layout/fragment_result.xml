@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="@color/background_color"
     tools:context=".ui.ResultFragment">
 
     <LinearLayout
@@ -20,15 +19,13 @@
             android:layout_marginBottom="12dp"
             android:backgroundTint="@color/border_color"
             android:alpha="0.5"
-            android:clipToOutline="true"
             android:scaleType="centerCrop"
             android:background="@drawable/rounded_bar" />
 
         <TextView
-            android:id="@+id/diagnosisTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/diagnosis"
+            android:text="@string/hasil_klasifikasi"
             android:textSize="22sp"
             android:textColor="@color/border_color"
             android:fontFamily="sans-serif-medium"
@@ -46,7 +43,7 @@
             android:id="@+id/classificationResult"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Disease Name"
+            android:text="@string/disease_name"
             android:textSize="24sp"
             android:textColor="@color/border_color"
             android:fontFamily="sans-serif-black"
@@ -56,16 +53,15 @@
             android:id="@+id/classificationConfidence"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Confidence Level"
+            android:text="@string/confidence_level"
             android:textSize="18sp"
             android:textColor="@color/primary_color"
             android:paddingBottom="16dp" />
 
         <TextView
-            android:id="@+id/recommendationsTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Recommendations"
+            android:text="@string/recommendations"
             android:textSize="18sp"
             android:textColor="@color/border_color"
             android:fontFamily="sans-serif-medium"
@@ -75,7 +71,7 @@
             android:id="@+id/recommendationsText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Follow these steps to improve plant health."
+            android:text="@string/ph_reccom"
             android:textSize="16sp"
             android:textColor="@color/primary_color"
             android:paddingBottom="24dp" />

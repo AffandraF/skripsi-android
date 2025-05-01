@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.auth.LoginActivity"
-    android:background="@color/background_color">
+    tools:context=".ui.auth.LoginActivity">
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -19,26 +18,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
 
+    <ImageView
+        android:id="@+id/imageViewGuava"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/ic_guava"
+        android:scaleType="fitCenter"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Selamat Datang"
+        android:text="@string/welcome"
         android:textColor="@color/primary_color"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageViewGuava"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp" />
+        android:layout_marginTop="16dp" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layoutUsername"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Username"
+        android:hint="@string/email"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,7 +68,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:hint="@string/password"
         app:endIconMode="password_toggle"
         app:layout_constraintTop_toBottomOf="@id/layoutUsername"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,27 +84,15 @@
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/linkForgotPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
-        android:text="Lupa Password?"
-        android:textColor="@color/link_color"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutPassword" />
-
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="88dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/rounded_button"
-        android:text="Login"
+        android:text="@string/login"
         android:textColor="@android:color/white"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -103,6 +101,7 @@
         app:layout_constraintTop_toBottomOf="@id/layoutPassword" />
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -113,37 +112,48 @@
         app:layout_constraintTop_toBottomOf="@id/buttonLogin">
 
         <TextView
-            android:id="@+id/textOrSignInWith"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Atau masuk dengan"
+            android:layout_marginEnd="8dp"
+            android:text="@string/atau_masuk_dengan"
             android:textColor="@color/link_color"
-            android:textSize="16sp"
-            android:layout_marginEnd="8dp" />
+            android:textSize="16sp" />
 
         <ImageButton
             android:id="@+id/buttonGoogleLogin"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:adjustViewBounds="true"
             android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/ic_google_logo"
             android:scaleType="centerInside"
-            android:adjustViewBounds="true" />
+            android:src="@drawable/ic_google_logo" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/linkRegister"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="208dp"
-        android:text="Buat Akun Baru"
-        android:textColor="@color/link_color"
-        android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/belum_punya_akun"
+            android:textColor="@color/link_color"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/linkRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/register"
+            android:textColor="@color/link_color"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

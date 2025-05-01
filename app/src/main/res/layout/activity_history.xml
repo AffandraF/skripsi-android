@@ -3,15 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background_color"
     tools:context=".ui.HistoryActivity">
 
     <TextView
-        android:id="@+id/title_history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Riwayat Klasifikasi"
+        android:text="@string/riwayat_klasifikasi"
         android:textColor="@color/border_color"
         android:textSize="20sp"
         android:fontFamily="sans-serif-medium"

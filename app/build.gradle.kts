@@ -2,18 +2,19 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
-val WEB_CLIENT_ID: String by project
+val webClientId: String by project
 
 android {
     namespace = "com.example.skripsi"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.skripsi"
-        minSdk = 34
-        targetSdk = 34
+        minSdk = 28
         versionCode = 1
         versionName = "1.0"
 
@@ -27,10 +28,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "WEB_CLIENT_ID", "\"${WEB_CLIENT_ID}\"")
+            buildConfigField("String", "webClientId", "\"${webClientId}\"")
         }
         debug {
-            buildConfigField("String", "WEB_CLIENT_ID", "\"${WEB_CLIENT_ID}\"")
+            buildConfigField("String", "webClientId", "\"${webClientId}\"")
         }
     }
 
@@ -50,17 +51,13 @@ android {
 
 dependencies {
 
-    implementation(libs.androidx.core.v1130)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.core.splashscreen)
     implementation(platform(libs.firebase.bom))
-    implementation(libs.androidx.credentials.v130)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.play.services.auth)
     implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.storage)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
@@ -79,9 +76,15 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.guava)
     implementation(libs.glide)
-    implementation(libs.firebase.storage.ktx)
-    implementation(libs.firebase.database.ktx)
+    implementation(libs.play.services.auth)
+    implementation(libs.androidx.espresso.core)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+kapt {
+    correctErrorTypes = true
 }

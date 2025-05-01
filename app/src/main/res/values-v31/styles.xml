@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.Skripsi</item>
-        <item name="splashScreenIconSize">500dp</item>
         <item name="android:windowSplashScreenBackground">@color/white</item>
     </style>
-
 </resources>

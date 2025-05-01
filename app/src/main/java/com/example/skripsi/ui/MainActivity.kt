@@ -1,58 +1,63 @@
 package com.example.skripsi.ui
 
 import android.Manifest
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Size
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.camera.core.*
-import androidx.camera.core.resolutionselector.ResolutionSelector
-import androidx.camera.core.resolutionselector.ResolutionStrategy
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.example.skripsi.R
+import com.example.skripsi.databinding.ActivityMainBinding
 import com.example.skripsi.ui.auth.LoginActivity
 import com.example.skripsi.viewmodel.ClassificationViewModel
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var buttonCamera: ImageButton
-    private lateinit var buttonGallery: ImageButton
-    private lateinit var buttonHistory: ImageButton
-    private lateinit var imageCapture: ImageCapture
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var cameraObserver: CameraLifecycleObserver
+    private lateinit var cameraExecutor: ExecutorService
     private val viewModel: ClassificationViewModel by viewModels()
     private var selectedImageUri: Uri? = null
-    private lateinit var cameraExecutor: ExecutorService
     private val userId: String = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
-    companion object {
-        private const val CAMERA_PERMISSION_REQUEST_CODE = 100
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            cameraObserver.startCamera()
+        } else {
+            Toast.makeText(this, "Camera permission is required", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
+        cameraExecutor = Executors.newSingleThreadExecutor()
 
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         splashScreen.setKeepOnScreenCondition { true }
         Handler(Looper.getMainLooper()).postDelayed({
@@ -61,41 +66,37 @@ class MainActivity : AppCompatActivity() {
 
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
         }
 
-        setContentView(R.layout.activity_main)
+        setupUI()
+        checkAndRequestPermissions()
 
+        cameraObserver = CameraLifecycleObserver(
+            context = this,
+            previewView = binding.cameraTextureView,
+            cameraExecutor = cameraExecutor,
+            lifecycleOwner = this
+        )
+        lifecycle.addObserver(cameraObserver)
+
+        viewModel.classificationResult.observe(this) { result ->
+            result?.let {
+                showResultFragment(it.disease, it.confidence, it.recommendations, selectedImageUri)
+            }
+        }
+    }
+
+    private fun setupUI() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        checkAndRequestPermissions()
-
-        buttonCamera = findViewById(R.id.button_camera)
-        buttonGallery = findViewById(R.id.button_image)
-        buttonHistory = findViewById(R.id.button_history)
-
-        startCamera()
-        observeViewModel()
-        cameraExecutor = Executors.newSingleThreadExecutor()
-
-        buttonGallery.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            galleryLauncher.launch(intent)
-        }
-
-        buttonCamera.setOnClickListener {
-            capturePhoto()
-        }
-
-        buttonHistory.setOnClickListener {
-            val intent = Intent(this, HistoryActivity::class.java)
-            startActivity(intent)
-        }
+        binding.buttonCamera.setOnClickListener { capturePhoto() }
+        binding.buttonGallery.setOnClickListener { openGallery() }
+        binding.buttonHistory.setOnClickListener { openHistory() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -106,155 +107,90 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_logout -> {
-                FirebaseAuth.getInstance().signOut()
-                startActivity(Intent(this, LoginActivity::class.java))
-                finish()
+                logout()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-
-        cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-            val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(findViewById<androidx.camera.view.PreviewView>(R.id.camera_texture_view).surfaceProvider)
-            }
-
-            val resolutionSelector = ResolutionSelector.Builder()
-                .setResolutionStrategy(
-                    ResolutionStrategy(
-                        Size(480, 480),
-                        ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER
-                    )
-                )
-                .build()
-
-            imageCapture = ImageCapture.Builder()
-                .setResolutionSelector(resolutionSelector)
-                .build()
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
-            } catch (exc: Exception) {
-                Toast.makeText(this, "Error starting camera", Toast.LENGTH_SHORT).show()
-            }
-
-        }, ContextCompat.getMainExecutor(this))
+    private fun logout() {
+        FirebaseAuth.getInstance().signOut()
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
     }
 
     private fun capturePhoto() {
-        val outputFileOptions = ImageCapture.OutputFileOptions.Builder(createFile()).build()
-
-        imageCapture.takePicture(outputFileOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {
-            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                val savedUri = outputFileResults.savedUri ?: Uri.fromFile(createFile())
-                if (savedUri != null) {
-                    selectedImageUri = savedUri
-                    viewModel.classifyImage(userId, File(savedUri.path!!))
-                } else {
-                    Toast.makeText(this@MainActivity, "Failed to retrieve image URI.", Toast.LENGTH_SHORT).show()
+        cameraObserver.capturePhoto(
+            onImageSaved = { file ->
+                lifecycleScope.launch(Dispatchers.Main) {
+                    selectedImageUri = Uri.fromFile(file)
+                    viewModel.classifyImage(userId, file)
                 }
+            },
+            onError = { exception ->
+                Toast.makeText(this, "Photo capture failed: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
-
-            override fun onError(exception: ImageCaptureException) {
-                Toast.makeText(this@MainActivity, "Photo capture failed: ${exception.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        )
     }
 
-    private fun createFile(): File {
-        return File(cacheDir, "captured_image_${System.currentTimeMillis()}.jpg")
+    override fun onPause() {
+        super.onPause()
+        cameraObserver.stopCamera()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        cameraObserver.stopCamera()
+    }
+
+    private fun openGallery() {
+        cameraObserver.stopCamera()
+        val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        galleryLauncher.launch(intent)
+    }
+
+    private fun openHistory() {
+        cameraObserver.stopCamera()
+        startActivity(Intent(this, HistoryActivity::class.java))
     }
 
     private fun checkAndRequestPermissions() {
-        val permissionsNeeded = mutableListOf<String>()
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            permissionsNeeded.add(Manifest.permission.CAMERA)
-        }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            permissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-        if (permissionsNeeded.isNotEmpty()) {
-            requestPermissions(permissionsNeeded.toTypedArray(), CAMERA_PERMISSION_REQUEST_CODE)
+        if (!hasCameraPermission()) {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                startCamera()
-            } else {
-                Toast.makeText(this, "Camera and storage permissions are required.", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+    private fun hasCameraPermission() =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 
     private val galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             val uri = result.data?.data
             if (uri != null) {
-                try {
-                    selectedImageUri = uri
-                    val file = uriToFile(uri, this)
-                    viewModel.classifyImage(userId, file)
-                } catch (e: Exception) {
-                    Toast.makeText(this, "Error processing selected image: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this, "No image selected.", Toast.LENGTH_SHORT).show()
+                selectedImageUri = uri
+                val file = uriToFile(uri)
+                viewModel.classifyImage(userId, file)
             }
-        } else {
-            Toast.makeText(this, "Image selection canceled.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun uriToFile(selectedImg: Uri, context: Context): File {
-        val contentResolver = context.contentResolver
-        val myFile = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
-        contentResolver.openInputStream(selectedImg)?.use { inputStream ->
-            FileOutputStream(myFile).use { outputStream ->
-                val buffer = ByteArray(1024)
-                var length: Int
-                while (inputStream.read(buffer).also { length = it } != -1) {
-                    outputStream.write(buffer, 0, length)
-                }
-            }
+    private fun uriToFile(uri: Uri): File {
+        val inputStream = contentResolver.openInputStream(uri) ?: throw IllegalStateException("Failed to open input stream")
+        val file = File(cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+        FileOutputStream(file).use { outputStream ->
+            inputStream.copyTo(outputStream)
         }
-        return myFile
+        return file
+    }
+
+    private fun showResultFragment(result: String, confidence: String, recommendations: String?, imageUri: Uri?) {
+        val resultFragment = ResultFragment.newInstance(result, confidence, recommendations, imageUri ?: Uri.EMPTY)
+        resultFragment.show(supportFragmentManager, "ResultFragment")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (this::cameraExecutor.isInitialized) {
-            cameraExecutor.shutdown()
-        }
+        cameraExecutor.shutdown()
     }
-
-    private fun observeViewModel() {
-        viewModel.classificationResult.observe(this, Observer { response ->
-            response?.let {
-                if (selectedImageUri != null) {
-                    val resultFragment = ResultFragment.newInstance(
-                        it.disease,
-                        it.confidence,
-                        it.recommendations,
-                        selectedImageUri!!
-                    )
-                    resultFragment.show(supportFragmentManager, resultFragment.tag)
-                } else {
-                    Toast.makeText(this, "Image URI is not available.", Toast.LENGTH_SHORT).show()
-                }
-            }
-        })
-    }
-
 }

@@ -14,7 +14,7 @@
         android:padding="8dp">
 
         <ImageView
-            android:id="@+id/image_disease"
+            android:id="@+id/imageDisease"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop"
@@ -31,7 +31,7 @@
                 android:id="@+id/tvDiseaseName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Disease Name"
+                android:text="@string/disease_name"
                 android:textColor="@color/border_color"
                 android:textSize="16sp"
                 android:fontFamily="sans-serif-medium" />
@@ -40,7 +40,7 @@
                 android:id="@+id/tvConfidence"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Confidence: 90%"
+                android:text="@string/ph_confidence"
                 android:textColor="@color/primary_color"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -49,7 +49,7 @@
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="12/20/2022"
+            android:text="@string/ph_data"
             android:textColor="@color/primary_color"
             android:textSize="14sp"
             android:gravity="end" />

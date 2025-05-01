@@ -1,41 +1,32 @@
+package com.example.skripsi.viewmodel
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.skripsi.data.model.HistoryItem
 import com.example.skripsi.data.repository.HistoryRepository
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HistoryViewModel : ViewModel() {
-    private val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("history")
+@HiltViewModel
+class HistoryViewModel @Inject constructor(
+    private val historyRepository: HistoryRepository
+) : ViewModel() {
+
+    private val _historyItems = MutableLiveData<List<HistoryItem>>()
+    val historyItems: LiveData<List<HistoryItem>> get() = _historyItems
+
     private val storageRef = FirebaseStorage.getInstance().reference
-    private val _historyItems = MutableLiveData<List<HistoryRepository>>()
-    val historyItems: LiveData<List<HistoryRepository>> get() = _historyItems
 
     fun fetchHistory() {
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-        if (currentUserId == null) {
-            _historyItems.value = emptyList()
-            return
+        viewModelScope.launch {
+            historyRepository.fetchUserHistory { historyList ->
+                _historyItems.postValue(historyList) // Aman untuk background thread
+            }
         }
-
-        val userHistoryRef = databaseRef.child(currentUserId)
-        userHistoryRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val items = mutableListOf<HistoryRepository>()
-                for (data in snapshot.children) {
-                    val item = data.getValue(HistoryRepository::class.java)
-                    if (item != null) {
-                        items.add(item)
-                    }
-                }
-                _historyItems.value = items
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-        })
     }
 
     fun getImageUrl(path: String, callback: (String) -> Unit) {
@@ -46,4 +37,3 @@ class HistoryViewModel : ViewModel() {
         }
     }
 }
-

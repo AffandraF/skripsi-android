@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.auth.RegisterActivity"
-    android:background="@color/background_color">
+    tools:context=".ui.auth.RegisterActivity">
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -19,50 +18,41 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
 
+    <ImageView
+        android:id="@+id/imageViewGuava"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/ic_guava"
+        android:scaleType="fitCenter"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
     <TextView
         android:id="@+id/textViewTitleRegister"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Buat Akun"
+        android:text="@string/buat_akun"
         android:textColor="@color/primary_color"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginTop="32dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageViewGuava"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layoutFullName"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Nama Lengkap"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitleRegister"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/inputFullName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layoutEmail"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:hint="@string/email"
         android:layout_marginTop="16dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        app:layout_constraintTop_toBottomOf="@id/layoutFullName"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitleRegister"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -78,7 +68,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:hint="@string/password"
         app:endIconMode="password_toggle"
         android:layout_marginTop="16dp"
         android:layout_marginStart="32dp"
@@ -102,7 +92,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/rounded_button"
-        android:text="Register"
+        android:text="@string/register"
         android:textColor="@color/background_color"
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/layoutPassword"
@@ -121,11 +111,10 @@
         app:layout_constraintTop_toBottomOf="@id/buttonRegister">
 
         <TextView
-            android:id="@+id/textOrSignUpWith"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="Atau masuk dengan"
+            android:text="@string/atau_masuk_dengan"
             android:textColor="@color/link_color"
             android:textSize="16sp" />
 
@@ -150,7 +139,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sudah punya akun? "
+            android:text="@string/sudah_punya_akun"
             android:textColor="@color/link_color"
             android:textSize="16sp" />
 
@@ -158,7 +147,7 @@
             android:id="@+id/linkToLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Log in"
+            android:text="@string/login"
             android:textColor="@color/link_color"
             android:textSize="16sp"
             android:textStyle="bold" />

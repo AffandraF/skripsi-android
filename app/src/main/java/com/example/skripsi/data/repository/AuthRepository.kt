@@ -1,45 +1,49 @@
-package com.example.skripsi.repository
+package com.example.skripsi.data.repository
 
 import android.util.Log
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AuthRepository {
+@Singleton
+class AuthRepository @Inject constructor(
+    private val firebaseAuth: FirebaseAuth
+) {
 
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-    fun registerWithEmail(email: String, password: String, callback: (AuthResult?) -> Unit) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    callback(task.result)
-                } else {
-                    val exception = task.exception
-                    Log.e("AuthRepository", "Registration failed", exception)
-                    callback(null)
-                }
-            }
+    suspend fun registerWithEmail(email: String, password: String): AuthResult? {
+        return try {
+            firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Register Error: ${e.message}")
+            null
+        }
     }
 
-    fun loginWithEmail(email: String, password: String, callback: (AuthResult?) -> Unit) {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    callback(task.result)
-                } else {
-                    val exception = task.exception
-                    Log.e("AuthRepository", "Login failed", exception)
-                    callback(null)
-                }
-            }
+    suspend fun loginWithEmail(email: String, password: String): AuthResult? {
+        return try {
+            firebaseAuth.signInWithEmailAndPassword(email, password).await()
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Login Error: ${e.message}")
+            null
+        }
     }
 
-    fun getCurrentUser(): FirebaseUser? {
-        return auth.currentUser
+    suspend fun loginWithGoogle(idToken: String): AuthResult? {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        return try {
+            firebaseAuth.signInWithCredential(credential).await()
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Google Sign-in Error: ${e.message}")
+            null
+        }
     }
 
-    fun signOut() {
-        auth.signOut()
+    fun logout() {
+        firebaseAuth.signOut()
     }
+
+    fun getCurrentUser() = firebaseAuth.currentUser
 }
