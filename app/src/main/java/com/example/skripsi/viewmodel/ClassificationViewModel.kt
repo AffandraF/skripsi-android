@@ -26,7 +26,4 @@ class ClassificationViewModel @Inject constructor(
         }
     }
 
-    fun clearResult() {
-        _classificationResult.postValue(null)
-    }
 }

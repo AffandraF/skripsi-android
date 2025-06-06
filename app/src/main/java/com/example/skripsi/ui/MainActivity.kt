@@ -144,10 +144,21 @@ class MainActivity : AppCompatActivity() {
         cameraObserver.stopCamera()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (hasCameraPermission()) {
+            cameraObserver.startCamera()
+        }
+    }
+
     private fun openGallery() {
         cameraObserver.stopCamera()
-        val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        galleryLauncher.launch(intent)
+        galleryLauncher.launch("image/*")
     }
 
     private fun openHistory() {
@@ -164,16 +175,16 @@ class MainActivity : AppCompatActivity() {
     private fun hasCameraPermission() =
         ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 
-    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val uri = result.data?.data
-            if (uri != null) {
-                selectedImageUri = uri
-                val file = uriToFile(uri)
-                viewModel.classifyImage(userId, file)
-            }
+    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            selectedImageUri = uri
+            val file = uriToFile(uri)
+            viewModel.classifyImage(userId, file)
+        } else {
+            cameraObserver.startCamera()
         }
     }
+
 
     private fun uriToFile(uri: Uri): File {
         val inputStream = contentResolver.openInputStream(uri) ?: throw IllegalStateException("Failed to open input stream")
@@ -187,10 +198,5 @@ class MainActivity : AppCompatActivity() {
     private fun showResultFragment(result: String, confidence: String, recommendations: String?, imageUri: Uri?) {
         val resultFragment = ResultFragment.newInstance(result, confidence, recommendations, imageUri ?: Uri.EMPTY)
         resultFragment.show(supportFragmentManager, "ResultFragment")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
     }
 }

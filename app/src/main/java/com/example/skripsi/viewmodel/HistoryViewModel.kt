@@ -24,7 +24,7 @@ class HistoryViewModel @Inject constructor(
     fun fetchHistory() {
         viewModelScope.launch {
             historyRepository.fetchUserHistory { historyList ->
-                _historyItems.postValue(historyList) // Aman untuk background thread
+                _historyItems.postValue(historyList)
             }
         }
     }

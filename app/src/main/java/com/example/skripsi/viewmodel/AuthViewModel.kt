@@ -59,11 +59,4 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
-
-    fun logout() {
-        authRepository.logout()
-        _authState.value = AuthState.Success(null)
-    }
-
-    fun getCurrentUser() = authRepository.getCurrentUser()
 }
